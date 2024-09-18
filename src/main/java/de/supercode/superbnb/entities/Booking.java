@@ -20,7 +20,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private AppUser user;
 
     public long getId() {
         return id;
@@ -62,11 +62,11 @@ public class Booking {
         this.property = property;
     }
 
-    public User getUser() {
+    public AppUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(AppUser user) {
         this.user = user;
     }
 }
