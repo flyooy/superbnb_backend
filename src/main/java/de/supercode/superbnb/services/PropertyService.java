@@ -7,12 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PropertyService {
     @Autowired
     PropertyRepository propertyRepository;
+
+    public Optional<Property> getPropertyById(long id){
+        return propertyRepository.findById(id);
+    }
 
     public List<PropertyDTO> getAllAvailableVacationApartments(){
         List<Property> properties = propertyRepository.findAllByAvailabilityIsTrue();

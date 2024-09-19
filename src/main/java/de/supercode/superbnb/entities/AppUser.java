@@ -13,7 +13,7 @@ public class AppUser {
     private String username;
     private String email;
     private String password;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings;
 
     public long getId() {
@@ -55,4 +55,6 @@ public class AppUser {
     public void setBookings(List<Booking> bookings) {
         this.bookings = bookings;
     }
+
+
 }

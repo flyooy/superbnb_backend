@@ -1,4 +1,13 @@
 package de.supercode.superbnb.dto;
 
-public record PropertyDTO(String adress, String city, double pricePerNight) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+
+public record PropertyDTO(
+        @NotBlank
+        String adress,
+        @NotBlank
+        String city,
+        @Positive
+        double pricePerNight) {
 }

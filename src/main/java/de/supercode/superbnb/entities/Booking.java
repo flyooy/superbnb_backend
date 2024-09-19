@@ -1,5 +1,6 @@
 package de.supercode.superbnb.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -16,10 +17,12 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "property_id", nullable = false)
+    @JsonIgnore
     private Property property;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private AppUser user;
 
     public long getId() {

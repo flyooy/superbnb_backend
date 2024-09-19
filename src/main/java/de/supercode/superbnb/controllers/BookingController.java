@@ -1,7 +1,16 @@
 package de.supercode.superbnb.controllers;
 
+import de.supercode.superbnb.dto.BookingCreateDto;
+import de.supercode.superbnb.dto.BookingDto;
+import de.supercode.superbnb.entities.AppUser;
 import de.supercode.superbnb.entities.Booking;
+import de.supercode.superbnb.entities.Property;
 import de.supercode.superbnb.services.BookingService;
+import de.supercode.superbnb.services.PropertyService;
+import de.supercode.superbnb.services.UserService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +23,30 @@ import java.util.List;
 public class BookingController {
     @Autowired
     BookingService bookingService;
+    @Autowired
+    PropertyService propertyService;
+    @Autowired
+    UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<Booking>> getAllBookings(){
-        List<Booking> bookings = bookingService.getAllBookings();
+    public ResponseEntity<List<BookingDto>> getAllBookings(){
+        List<BookingDto> bookings = bookingService.getAllBookings();
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+    public ResponseEntity<Booking> createBooking(@Valid @RequestBody BookingCreateDto bookingDTO) {
+        Property property = propertyService.getPropertyById(bookingDTO.propertyId())
+                .orElseThrow(() -> new EntityNotFoundException("Property not found with id " + bookingDTO.propertyId()));
+        AppUser user = userService.getUserById(bookingDTO.userId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + bookingDTO.userId()));
+        Booking booking = new Booking();
+        booking.setBookingDate(bookingDTO.bookingDate());
+        booking.setCheckInDate(bookingDTO.checkInDate());
+        booking.setCheckOutDate(bookingDTO.checkOutDate());
+        booking.setProperty(property);
+        booking.setUser(user);
+
         Booking createdBooking = bookingService.createBooking(booking);
         return new ResponseEntity<>(createdBooking, HttpStatus.CREATED);
     }

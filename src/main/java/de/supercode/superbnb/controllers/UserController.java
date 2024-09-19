@@ -1,9 +1,11 @@
 package de.supercode.superbnb.controllers;
 
 
+import de.supercode.superbnb.dto.UserCreateDTO;
 import de.supercode.superbnb.dto.UserDTO;
 import de.supercode.superbnb.entities.AppUser;
 import de.supercode.superbnb.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +26,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
+    public ResponseEntity<UserDTO> createUser( @Valid @RequestBody UserCreateDTO userCreatedDTO) {
+        AppUser user = new AppUser();
+        user.setUsername(userCreatedDTO.username());
+        user.setEmail(userCreatedDTO.email());
+        user.setPassword(userCreatedDTO.password());
         AppUser createdUser = userService.createUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        UserDTO responseDTO = new UserDTO(createdUser.getUsername(), createdUser.getEmail());
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
