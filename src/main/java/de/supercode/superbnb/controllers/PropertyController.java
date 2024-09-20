@@ -16,15 +16,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/api/properties")
+@CrossOrigin(origins = "*")
 public class PropertyController {
 
     @Autowired
     PropertyService propertyService;
 
-    @GetMapping
-    public ResponseEntity<List<PropertyDTO>> getAllAvailableVacationApartments(){
+
+    @GetMapping("/public")
+    public ResponseEntity<List<PropertyDTO>> getAllAvailableVacationApartments() {
         List<PropertyDTO> properties = propertyService.getAllAvailableVacationApartments();
         return new ResponseEntity<>(properties, HttpStatus.OK);
     }
