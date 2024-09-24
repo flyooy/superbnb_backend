@@ -15,6 +15,11 @@ public class PropertyService {
     @Autowired
     PropertyRepository propertyRepository;
 
+
+    public List<Property> getAllProperties(){
+        return propertyRepository.findAll();
+    }
+
     public Optional<Property> getPropertyById(long id){
         return propertyRepository.findById(id);
     }
@@ -23,7 +28,7 @@ public class PropertyService {
         List<Property> properties = propertyRepository.findAllByAvailabilityIsTrue();
 
         return properties.stream()
-                .map(property -> new PropertyDTO(property.getAdress(), property.getCity(), property.getPricePerNight()))
+                .map(property -> new PropertyDTO(property.getId(),property.getAdress(), property.getCity(), property.getPricePerNight()))
                 .collect(Collectors.toList());
     }
 

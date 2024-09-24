@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,19 +20,33 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/properties")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
+
 public class PropertyController {
 
     @Autowired
     PropertyService propertyService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping
+    public List<Property> getAllProperties(){
+        return propertyService.getAllProperties();
+    }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Property> getPropertyById(@PathVariable Long id) {
+        Optional<Property> property = propertyService.getPropertyById(id);
+        return property.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
     @GetMapping("/public")
     public ResponseEntity<List<PropertyDTO>> getAllAvailableVacationApartments() {
         List<PropertyDTO> properties = propertyService.getAllAvailableVacationApartments();
+        System.out.println("Fetched properties: " + properties);
         return new ResponseEntity<>(properties, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<Property> createNewProperty(@Valid @RequestBody PropertyCreateDTO propertyDTO){
         Property property = new Property();
@@ -43,7 +58,7 @@ public class PropertyController {
         Property createdProperty = propertyService.createNewProperty(property);
         return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Property> updateProperty(@PathVariable Long id, @Valid @RequestBody PropertyUpdateDTO propertyDTO) {
         try {
@@ -69,7 +84,7 @@ public class PropertyController {
         }
     }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteProperty (@PathVariable Long id){
         try {

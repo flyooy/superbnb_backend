@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AuthDto(
         @NotBlank(message = "Username is mandatory")  String username,
-        @Email(message = "Invalid email format") String email,
+        @NotBlank(message = "Email is mandatory") String email,
         @NotBlank(message = "Password is mandatory") String password
 ) {
 }

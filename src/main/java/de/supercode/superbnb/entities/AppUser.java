@@ -18,6 +18,7 @@ public class AppUser implements UserDetails {
     private String username;
     private String email;
     private String password;
+    private String role;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings;
 
@@ -61,10 +62,18 @@ public class AppUser implements UserDetails {
         this.bookings = bookings;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ADMIN"));
+        authorities.add(new SimpleGrantedAuthority(this.role));
         return authorities;
     }
 
