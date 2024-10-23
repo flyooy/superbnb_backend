@@ -25,6 +25,8 @@ public class Booking {
     @JsonIgnore
     private AppUser user;
 
+
+
     public long getId() {
         return id;
     }

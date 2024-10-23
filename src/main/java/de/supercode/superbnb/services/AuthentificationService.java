@@ -21,6 +21,9 @@ public class AuthentificationService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private TokenService tokenService;
+
 
 
     public AppUser signUp(@Valid SignUpDto dto){
@@ -30,5 +33,8 @@ public class AuthentificationService {
         user.setPassword(passwordEncoder.encode(dto.password()));
         user.setRole(dto.role());
         return userRepository.save(user);
+    }
+    public String getJwt(Authentication authentication){
+        return tokenService.generateToken(authentication);
     }
 }

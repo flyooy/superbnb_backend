@@ -4,6 +4,7 @@ package de.supercode.superbnb.controllers;
 import de.supercode.superbnb.dto.UserCreateDTO;
 import de.supercode.superbnb.dto.UserDTO;
 import de.supercode.superbnb.entities.AppUser;
+import de.supercode.superbnb.repositories.UserRepository;
 import de.supercode.superbnb.services.AuthentificationService;
 import de.supercode.superbnb.services.UserService;
 import jakarta.validation.Valid;
@@ -19,14 +20,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
     @Autowired
     UserService userService;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     AuthentificationService authentificationService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         List<UserDTO> users = userService.getAllUsers();
@@ -35,23 +38,23 @@ public class UserController {
 
     @GetMapping("/current")
     public ResponseEntity<UserDTO> getCurrentUser() {
-        // Получаем аутентификацию из контекста безопасности
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof AppUser) {
-            AppUser currentUser = (AppUser) authentication.getPrincipal(); // Получаем текущего пользователя
+        if (authentication != null && authentication.isAuthenticated() ) {
+            AppUser currentUser = userRepository.findByEmail(authentication.getName()).orElseThrow();
 
-            // Возвращаем информацию о текущем пользователе
+
             UserDTO userDTO = new UserDTO(currentUser.getId(), currentUser.getUsername(), currentUser.getEmail());
             return ResponseEntity.ok(userDTO);
         }
 
-        // Если пользователь не аутентифицирован, возвращаем 403 Forbidden
+
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<UserDTO> createUser( @Valid @RequestBody UserCreateDTO userCreatedDTO) {
         AppUser user = new AppUser();

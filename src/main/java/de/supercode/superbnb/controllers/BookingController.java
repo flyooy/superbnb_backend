@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://localhost:5173")
 public class BookingController {
     @Autowired
     BookingService bookingService;
@@ -30,7 +30,7 @@ public class BookingController {
     @Autowired
     UserService userService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<List<BookingDto>> getAllBookings(){
         List<BookingDto> bookings = bookingService.getAllBookings();
@@ -39,10 +39,14 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Booking> createBooking(@Valid @RequestBody BookingCreateDto bookingDTO) {
-        Property property = propertyService.getPropertyById(bookingDTO.propertyId())
-                .orElseThrow(() -> new EntityNotFoundException("Property not found with id " + bookingDTO.propertyId()));
+        Property property = propertyService.getPropertyById(bookingDTO.propertyId());
+        if (property == null) {
+            throw new EntityNotFoundException("Property not found with id " + bookingDTO.propertyId());
+        }
+
         AppUser user = userService.getUserById(bookingDTO.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + bookingDTO.userId()));
+
         Booking booking = new Booking();
         booking.setBookingDate(bookingDTO.bookingDate());
         booking.setCheckInDate(bookingDTO.checkInDate());

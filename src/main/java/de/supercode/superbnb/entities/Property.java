@@ -2,13 +2,16 @@ package de.supercode.superbnb.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Property {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String adress;
     private String city;
@@ -16,6 +19,23 @@ public class Property {
     private boolean availability;
     @OneToMany(mappedBy = "property")
     private List<Booking> bookings;
+    public Property(Long id, String adress, String city, double pricePerNight, boolean availability, List<Booking> bookings) {
+        this.id = id;
+        this.adress = adress;
+        this.city = city;
+        this.pricePerNight = pricePerNight;
+        this.availability = availability;
+        this.bookings = bookings;
+    }
+    public Property(){
+
+    }
+
+    public Property(Long id, String adress, String city, double pricePerNight, boolean availability) {
+        this(id, adress, city, pricePerNight, availability, new ArrayList<>()); // Инициализация bookings пустым списком
+    }
+
+
 
     public long getId() {
         return id;
